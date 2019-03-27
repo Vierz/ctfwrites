@@ -9,7 +9,7 @@
 
 Descargue la vm y luego de correrla en VirtualBox, lo primero que hice fue hacer un escaneo de todos los puertos y las versiones de sus servicios:
 ```console
-vierz@localhost$: nmap -sV 192.168.56.106 -p- 
+vierz@localhost:~# nmap -sV 192.168.56.106 -p- 
 PORT      STATE SERVICE VERSION
 21/tcp    open  ftp     vsftpd 3.0.3
 22/tcp    open  ssh?
@@ -137,3 +137,138 @@ FLAG{Whoa this is unexpected} - 10 Points
 ```
 #### FLAG{Whoa this is unexpected} - 10 Points
 ---
+
+El proximo puerto con el que segui fue el 13337 que no esta asignado a ningun servicio.
+Utilice **netcat** para intentar caputrar el banner, y cuando lo hice, me devolvio otra bandera:
+
+```console
+root@atkvm:~# nc 192.168.56.106 13337
+FLAG:{TheyFoundMyBackDoorMorty}-10Points
+```
+
+#### FLAG:{TheyFoundMyBackDoorMorty}-10Points
+
+---
+
+Para este proximo puerto, el 60000, intente lo mismo que el anterior para ver si puedo capturar el banner, pero esta vez vi que me devolvio un tipo de shell, y haciendo un ls vi que habia un archivo FLAG.txt al que le hice un cat para ver el contenido y de esta manera consegui otra bandera.
+
+```console
+root@atkvm:~# nc 192.168.56.106 60000
+Welcome to Ricks half baked reverse shell...
+# ls
+FLAG.txt 
+# cat FLAG.txt
+FLAG{Flip the pickle Morty!} - 10 Points 
+# 
+```
+#### FLAG{Flip the pickle Morty!} - 10 Points
+---
+
+Listo ahora me quedan dos puertos, uno es el 22 y el otro es el 22222. Primero intente ingresar por ssh al 22 pero viendo la respuesta, el mismo no estaba usando el puerto de OpenSSH, mismo nmap no pudo identificar el servicio.
+Mi primer paso fue correr netcat y como banner solo me devolvio un banner con la version de Linux.
+
+```console
+root@atkvm:~# nc 192.168.56.106 22
+Welcome to Ubuntu 14.04.5 LTS (GNU/Linux 4.4.0-31-generic x86_64)
+```
+Luego de ver que no consegui nada con ese puerto segui con el proximo, el 22222, y este puerto si tiene el servicio de OpenSSH activo.
+Mi primer intento fue utilizar alguno de los usuarios que pude listar pasos mas arriba.
+La primera opcion fue el usuario **Summer**, y por conjetura use el password **winter** que encontre comentado en el codigo de un archivo, y listo pude ingresar y ver que hay una bandera en el home directory:
+```console
+root@atkvm:~# ssh Summer@192.168.56.106 -p 22222
+Summer@192.168.56.106's password: 
+Last failed login: Wed Mar 27 13:49:59 AEDT 2019 from 192.168.56.1 on ssh:notty
+There was 1 failed login attempt since the last successful login.
+Last login: Wed Mar 27 13:48:04 2019 from 192.168.56.1
+[Summer@localhost ~]$
+[Summer@localhost ~]$ ls
+FLAG.txt  safe
+[Summer@localhost ~]$ pwd
+/home/Summer
+[Summer@localhost ~]$ more FLAG.txt 
+FLAG{Get off the high road Summer!} - 10 Points
+```
+#### FLAG{Get off the high road Summer!} - 10 Points
+
+Luego intente ver que contiene el archivo **safe**, que es un ejecutable y lo unico que consegui fue lo siguiente:
+```console
+[Summer@localhost ~]$ ./safe 
+Past Rick to present Rick, tell future Rick to use GOD DAMN COMMAND LINE AAAAAHHAHAGGGGRRGUMENTS!
+```
+Por que dice el texto se ve que tengo que pasarle un argumento a ese archivo, pero no se cual es, asi que sigo investigando que mas puedo hacer teniendo shell.
+
+---
+
+Teniendo shell pude ver que veo los directorios de los otros usuarios en **/home**
+Ingrese al directorio del usuario **Morty** y vi los sigueintes archivos
+```console
+[Summer@localhost ~]$ cd ..
+[Summer@localhost home]$ ls
+Morty  RickSanchez  Summer
+[Summer@localhost home]$ cd Morty/
+[Summer@localhost Morty]$ ls
+journal.txt.zip  Safe_Password.jpg
+[Summer@localhost Morty]$ 
+```
+Lo primero que hice fue traerme la image con scp
+```console
+root@atkvm:~# scp -P 22222 Summer@192.168.56.106:/home/Morty/Safe_Password.jpg .Summer@192.168.56.106's password: 
+Safe_Password.jpg                             100%   42KB   8.8MB/s   00:00 
+```
+Viendo la imagen despues de bajarla, vi que no tiene nada en particular, asi que me fije con **strings** a ver que contiene, y vi que se menciona al otro archivo que es un zip y el password del mismo.
+```console
+root@atkvm:~# strings Safe_Password.jpg 
+JFIF
+Exif
+8 The Safe Password: File: /home/Morty/journal.txt.zip. Password: Meeseek
+8BIM
+8BIM
+$3br
+%&'()*456789:CDEFGHIJSTUVWXYZcdefghijstuvwxyz
+```
+Por lo tanto lo proximo fue utilizar scp para bajarme el zip, y abrirlo con el password **Meeseek**
+Al descomprimir el zip, me devolvio un archivo journal.txt que tenia la bandera adentro.
+```console
+root@atkvm:~# more journal.txt
+Monday: So today Rick told me huge secret. He had finished his flask and was on to commercial grade paint solvent. He spluttered something about a safe, and a password. Or maybe it was a saf
+e password... Was a password that was safe? Or a password to a safe? Or a safe password to a safe?
+
+Anyway. Here it is:
+
+FLAG: {131333} - 20 Points 
+```
+#### FLAG: {131333} - 20 Points 
+
+Pero leyendo el journal.txt mencionan el archivo **safe** que corri mas arriba y que necesitaba de un argumento. Aca mencionan tambien una contraseña, y viendo que la bandera tiene un numero lo proximo que intente fue correr ese numero en el archivo safe.
+```console
+[Summer@localhost Morty]$ cd ..
+[Summer@localhost home]$ cd Summer/
+[Summer@localhost ~]$ ls
+FLAG.txt  safe
+[Summer@localhost ~]$ ./safe 131333
+decrypt: 	FLAG{And Awwwaaaaayyyy we Go!} - 20 Points
+
+Ricks password hints:
+ (This is incase I forget.. I just hope I don't forget how to write a script to generate potential passwords. Also, sudo is wheely good.)
+Follow these clues, in order
+
+
+1 uppercase character
+1 digit
+One of the words in my old bands name.�	@
+```
+Y ahi tenemos mas informacion y una bandera:
+#### FLAG{And Awwwaaaaayyyy we Go!} - 20 Points
+
+Luedo viendo el contenido del archivo safe, mencionan pistas de como conseguir el password del usuario de Rick, que en este caso es **RickSanchez** por lo que vimos en el archivo /etc/passwd
+Segun el texto el password esta compuesto de la siguiente manera:
++ 1 letra mayuscula
++ 1 numero
++ una de las palabras de su vieja banda.
+Nunca vi Rick y Morty asi que fui a google para buscar como se llama la vieja banda, y la respuesta aparecio enseguida:
+![alt text](https://i.imgur.com/IzONQb3.png)
+**La banda es:** The Flesh Courtains
+
+Listo ya tenia todas las pistas para armar una wordlist y hacer un brute force por ssh con el usuario de rick.
+Lo siguiente fue armar una wordlist con crunch usando las pistas.
+
