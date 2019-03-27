@@ -267,8 +267,42 @@ Segun el texto el password esta compuesto de la siguiente manera:
 + una de las palabras de su vieja banda.
 Nunca vi Rick y Morty asi que fui a google para buscar como se llama la vieja banda, y la respuesta aparecio enseguida:
 ![alt text](https://i.imgur.com/IzONQb3.png)
-**La banda es:** The Flesh Courtains
+
+**La banda es:** The Flesh Curtains
 
 Listo ya tenia todas las pistas para armar una wordlist y hacer un brute force por ssh con el usuario de rick.
 Lo siguiente fue armar una wordlist con crunch usando las pistas.
+```console
+root@atkvm:~# crunch 7 7 ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 -t ,%flesh >> pass.txt
+Crunch will now generate the following amount of data: 2080 bytes
+0 MB
+0 GB
+0 TB
+0 PB
+Crunch will now generate the following number of lines: 260
+root@atkvm:~# crunch 7 7 ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 -t ,%Flesh >> pass.txt
+Crunch will now generate the following amount of data: 2080 bytes
+0 MB
+0 GB
+0 TB
+0 PB
+Crunch will now generate the following number of lines: 260
+root@atkvm:~# crunch 10 10 ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 -t ,%curtains >> pass.txt
+Crunch will now generate the following amount of data: 2080 bytes
+0 MB
+0 GB
+0 TB
+0 PB
+Crunch will now generate the following number of lines: 260
+root@atkvm:~# crunch 10 10 ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 -t ,%Curtains >> pass.txt
+Crunch will now generate the following amount of data: 2080 bytes
+0 MB
+0 GB
+0 TB
+0 PB
+Crunch will now generate the following number of lines: 260
+```
+Genere 4 listas y las uni en un solo archivo txt para luego utilizar hydra para hacer el ataque de fuerza bruta.
+
+
 
