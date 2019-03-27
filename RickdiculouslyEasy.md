@@ -9,7 +9,7 @@
 
 Descargue la vm y luego de correrla en VirtualBox, lo primero que hice fue hacer un escaneo de todos los puertos y las versiones de sus servicios:
 ```console
-root@localhost$: nmap -sV 192.168.56.106 -p- 
+vierz@localhost$: nmap -sV 192.168.56.106 -p- 
 PORT      STATE SERVICE VERSION
 21/tcp    open  ftp     vsftpd 3.0.3
 22/tcp    open  ssh?
@@ -104,7 +104,7 @@ El proximo puerto con el que segui fue el del ftp, el puerto 21.
 Lo primero que hice fue correr un nmap con los scripts mas comunes que vienen por defecto con la opcion -sC
 
 ```console
-root@localhost:~# nmap -sC 192.168.56.106 -p 21
+vierz@localhost:~# nmap -sC 192.168.56.106 -p 21
 Starting Nmap 7.70 ( https://nmap.org ) at 2019-03-27 12:39 EDT
 Nmap scan report for pepe.com (192.168.56.106)
 Host is up (0.0038s latency).
@@ -132,7 +132,8 @@ Y lo primero que vi fue que esta permitido el logueo anonimo y veo listado un ar
 Asi que lo siguiente fue hacer un curl al archivo para ver el contenido y de esa manera consegui otra bandera.
 
 ```console
-root@localhost:~# curl ftp://192.168.56.106/FLAG.txt
+vierz@localhost:~# curl ftp://192.168.56.106/FLAG.txt
 FLAG{Whoa this is unexpected} - 10 Points
 ```
+#### FLAG{Whoa this is unexpected} - 10 Points
 ---
