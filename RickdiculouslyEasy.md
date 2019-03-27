@@ -96,7 +96,7 @@ Viendo el contenido tome nota de los usuarios que pueden usar bash:
 + **Morty**
 + **Summer**
 
-Luego segui intentando ver si podia seguir explotando algo pero al ver que no segui con los proximos puertos.
+Luego segui intentando ver si podia seguir explotando algo pero al ver que no, segui con los proximos puertos.
 
 ---
 
