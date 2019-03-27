@@ -90,7 +90,7 @@ Una vez conseguida esa bandera, pense que se podia usar el mismo exploit para tr
 
 ![alt text](https://i.imgur.com/bMQBhVy.png)
 
-Viendo el contenido tome nota de los usuarios que se pueden usar bash:
+Viendo el contenido tome nota de los usuarios que pueden usar bash:
 
 + **RickSanchez**
 + **Morty**
