@@ -30,7 +30,9 @@ Y ya en el body esta la bandera:
 
 #### FLAG {There is no Zeus, in your face!} - 10 Points
 
-En esa pagina hay un login pero no encontre la manera de romperlo asi que segui al proximo puerto, el 80.
+---
+
+Mi proximo paso fue seguir con el puerto 80, por lo tanto navegue la ip para ver que me trae:
 
 **http://192.168.56.106**
 
@@ -73,5 +75,64 @@ Por ultimo navegue a esa misma ruta y vi que el directorio estaba con el Index h
 
 #### FLAG{Yeah d- just don't do it.} - 10 Points
 
+Por ultimo revise el archivo **passwords.html** que a simple vista no tenia nada importante, pero viendo el codigo fuente encontre un comentario:
 
+```html
+<!--Password: winter-->
+```
+Por lo tanto ya tenemos un password de alguien pero no sabemos de quien.
 
+**Password:** winter
+
+---
+
+Una vez conseguida esa bandera, pense que se podia usar el mismo exploit para traer el contenido de /etc/passwd
+
+![alt text](https://i.imgur.com/bMQBhVy.png)
+
+Viendo el contenido tome nota de los usuarios que se pueden usar bash:
+
++ **RickSanchez**
++ **Morty**
++ **Summer**
+
+Luego segui intentando ver si podia seguir explotando algo pero al ver que no segui con los proximos puertos.
+
+---
+
+El proximo puerto con el que segui fue el del ftp, el puerto 21.
+Lo primero que hice fue correr un nmap con los scripts mas comunes que vienen por defecto con la opcion -sC
+
+```console
+root@localhost:~# nmap -sC 192.168.56.106 -p 21
+Starting Nmap 7.70 ( https://nmap.org ) at 2019-03-27 12:39 EDT
+Nmap scan report for pepe.com (192.168.56.106)
+Host is up (0.0038s latency).
+
+PORT   STATE SERVICE
+21/tcp open  ftp
+| ftp-anon: Anonymous FTP login allowed (FTP code 230)
+| -rw-r--r--    1 0        0              42 Aug 22  2017 FLAG.txt
+|_drwxr-xr-x    2 0        0               6 Feb 12  2017 pub
+| ftp-syst: 
+|   STAT: 
+| FTP server status:
+|      Connected to ::ffff:192.168.56.1
+|      Logged in as ftp
+|      TYPE: ASCII
+|      No session bandwidth limit
+|      Session timeout in seconds is 300
+|      Control connection is plain text
+|      Data connections will be plain text
+|      At session startup, client count was 5
+|      vsFTPd 3.0.3 - secure, fast, stable
+|_End of status
+```
+Y lo primero que vi fue que esta permitido el logueo anonimo y veo listado un archivo llamado FLAG.txt
+Asi que lo siguiente fue hacer un curl al archivo para ver el contenido y de esa manera consegui otra bandera.
+
+```console
+root@localhost:~# curl ftp://192.168.56.106/FLAG.txt
+FLAG{Whoa this is unexpected} - 10 Points
+```
+---
